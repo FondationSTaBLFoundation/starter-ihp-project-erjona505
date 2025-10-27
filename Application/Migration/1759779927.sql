@@ -1,0 +1,1 @@
+ALTER TABLE users ALTER COLUMN locked_at SET DEFAULT now();
