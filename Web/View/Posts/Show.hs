@@ -10,6 +10,7 @@ renderMarkdown text =
         Right markdown -> MMark.render markdown |> tshow |> preEscapedToHtml
 
 
+
 instance View ShowView where
     html ShowView { .. } = [hsx|
         {breadcrumb}

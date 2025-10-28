@@ -37,10 +37,6 @@ data SessionsController
     | MyAction
     deriving (Eq, Show, Data)
 
-instance HasNewSessionUrl User where
-    newSessionUrl _ = "/NewSession"
-
-type instance CurrentUserRecord = User
 data UsersController
     = UsersAction
     | NewUserAction
@@ -49,5 +45,11 @@ data UsersController
     | EditUserAction { userId :: !(Id User) }
     | UpdateUserAction { userId :: !(Id User) }
     | DeleteUserAction { userId :: !(Id User) }
-    | ConfirmationUserAction { userId :: !(Id User), confrimationToken :: !Text }
     deriving (Eq, Show, Data)
+
+
+instance HasNewSessionUrl User where
+    newSessionUrl _ = "/NewSession"
+
+type instance CurrentUserRecord = User
+

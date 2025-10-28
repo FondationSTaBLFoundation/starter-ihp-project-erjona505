@@ -9,15 +9,19 @@ import qualified Text.MMark as MMark
 
 
 instance Controller PostsController where
+    
+
     action PostsAction = do
         posts <- query @Post |> orderByDesc #createdAt |> fetch
         render IndexView { .. }
 
+
     action NewPostAction = do
         let post = newRecord
         render NewView { .. }
-
+        
     action ShowPostAction { postId } = do
+
         post <- fetch postId
              >>= pure . modify #comments (orderByDesc #createdAt)
             >>= fetchRelated #comments

@@ -6,13 +6,10 @@ import Web.View.Users.New
 import Web.View.Users.Edit
 import Web.View.Users.Show
 
-import qualified IHP.AuthSupport.Controller.Confirmations as Confirmations
 import qualified Web.Controller.Sessions ()
 
-import IHP.AuthSupport.Confirm
-import Web.Mail.Users.ConfirmationMail
-
 instance Controller UsersController where
+
     action UsersAction = do
         users <- query @User |> fetch
         render IndexView { .. }
@@ -66,25 +63,19 @@ instance Controller UsersController where
 
         let passwordConfirmation = param @Text "passwordConfirmation"
         user
-            |> fill @["email", "passwordHash"]
-            -- We ensure that the error message doesn't include
-            -- the entered password.
-            |> validateField #passwordHash (isEqual passwordConfirmation |> withCustomErrorMessage "Passwords don't match")
-            |> validateField #passwordHash nonEmpty
+          |> fill @["email", "passwordHash"]
             |> validateField #email isEmail
-            -- After this validation, since it's operation on the IO, we'll need to use >>=.
-            |> validateIsUnique #email
-            >>= ifValid \case
-                Left user -> render NewView { .. } 
+            |> validateField #passwordHash nonEmpty
+            |> ifValid \case
+                Left user -> render NewView { .. }
                 Right user -> do
                     hashed <- hashPassword user.passwordHash
                     user <- user
                         |> set #passwordHash hashed
                         |> createRecord
                     
-                    sendConfirmationMail user
-                    setSuccessMessage "You have registered successfully!"
-                    redirectToPath NewSessionAction
+                   
+                    redirectTo NewSessionAction
 
     action DeleteUserAction { userId } = do
         user <- fetch userId
@@ -92,13 +83,6 @@ instance Controller UsersController where
         setSuccessMessage "User deleted"
         redirectTo UsersAction
 
-    action ConfirmationUserAction { userId, confirmationToken } = Confirmations.confirmAction userId confirmationToken
-
-instance Confirmations.ConfirmationsControllerConfig User where
-    --costumize the confirmation process
-    afterConfirmation user = do
-        -- this code is called whenever a user was confirmed
-        sendMail WelcomeMail { user }
 
 buildUser user = user
     |> fill @'["email", "passwordHash", "failedLoginAttempts", "logins"]
