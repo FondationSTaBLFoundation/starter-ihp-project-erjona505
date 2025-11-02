@@ -23,6 +23,7 @@ echo -e "\n. ~/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc
 sudo apt install direnv; echo -e '\neval "$(direnv hook bash)"' >> ~/.bashrc
 
 echo 'export IHP_BASEURL=$(if [ -n "${CODESPACE_NAME}" ]; then echo "https://${CODESPACE_NAME}-8000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"; else echo "http://localhost:8000"; fi)' >> ~/.bashrc
+echo 'export APPROOT=$(if [ -n "${CODESPACE_NAME}" ]; then echo "https://${CODESPACE_NAME}-8000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"; else echo "http://localhost:8000"; fi)' >> ~/.bashrc
 echo 'export IHP_IDE_BASEURL=$(if [ -n "${CODESPACE_NAME}" ]; then echo "https://${CODESPACE_NAME}-8001.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"; else echo "http://localhost:8001"; fi)' >> ~/.bashrc
 
 sudo apt install acl; sudo setfacl -k /tmp
